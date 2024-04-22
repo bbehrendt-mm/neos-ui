@@ -739,15 +739,9 @@ class BackendServiceController extends ActionController
                     : RebaseErrorHandlingStrategy::STRATEGY_FAIL
             );
 
-            $this->syncWorkspaceCommandHandler->handle($command);
+            $result = $this->syncWorkspaceCommandHandler->handle($command);
 
-            $this->view->assign('value', [
-                'success' => true
-            ]);
-        } catch (ConflictsOccurred $e) {
-            $this->view->assign('value', [
-                'conflicts' => $e->conflicts
-            ]);
+            $this->view->assign('value', $result);
         } catch (\Exception $e) {
             $this->view->assign('value', [
                 'error' => [
