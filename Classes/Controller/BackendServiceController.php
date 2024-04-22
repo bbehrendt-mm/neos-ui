@@ -203,7 +203,7 @@ class BackendServiceController extends ActionController
     /**
      * Publish all changes in the current site
      *
-     * @phpstan-param array<string,string> $command
+     * @phpstan-param array{workspaceName:string,siteId:string,preferredDimensionSpacePoint?:array<string,string[]>} $command
      */
     public function publishChangesInSiteAction(array $command): void
     {
@@ -236,7 +236,7 @@ class BackendServiceController extends ActionController
     /**
      * Publish all changes in the current document
      *
-     * @phpstan-param array<string,string> $command
+     * @phpstan-param array{workspaceName:string,documentId:string,preferredDimensionSpacePoint?:array<string,string[]>} $command
      */
     public function publishChangesInDocumentAction(array $command): void
     {

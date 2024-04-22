@@ -14,9 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Ui\Application\PublishChangesInDocument;
 
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Workspace\WorkspaceProvider;
+use Neos\Neos\Ui\Application\Shared\Conflicts;
+use Neos\Neos\Ui\Application\Shared\ConflictsOccurred;
 use Neos\Neos\Ui\Application\Shared\PublishSucceeded;
 
 /**
@@ -28,6 +32,9 @@ use Neos\Neos\Ui\Application\Shared\PublishSucceeded;
 #[Flow\Scope("singleton")]
 final class PublishChangesInDocumentCommandHandler
 {
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     #[Flow\Inject]
     protected WorkspaceProvider $workspaceProvider;
 
@@ -51,6 +58,22 @@ final class PublishChangesInDocumentCommandHandler
             throw new NodeAggregateCurrentlyDoesNotExist(
                 'Node could not be published, probably because of a missing parentNode. Please check that the parentNode has been published.',
                 1682762156
+            );
+        } catch (WorkspaceRebaseFailed $e) {
+            $conflictsBuilder = Conflicts::builder(
+                contentRepository: $this->contentRepositoryRegistry
+                    ->get($command->contentRepositoryId),
+                workspaceName: $command->workspaceName,
+                preferredDimensionSpacePoint: $command->preferredDimensionSpacePoint
+            );
+
+            foreach ($e->commandsThatFailedDuringRebase as $commandThatFailedDuringRebase) {
+                $conflictsBuilder->addCommandThatFailedDuringRebase($commandThatFailedDuringRebase);
+            }
+
+            throw new ConflictsOccurred(
+                $conflictsBuilder->build(),
+                1712832228
             );
         }
     }
