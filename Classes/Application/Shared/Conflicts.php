@@ -33,16 +33,9 @@ final readonly class Conflicts implements \JsonSerializable, \Countable
         $this->items = $items;
     }
 
-    public static function builder(
-        ContentRepository $contentRepository,
-        WorkspaceName $workspaceName,
-        ?DimensionSpacePoint $preferredDimensionSpacePoint,
-    ): ConflictsBuilder {
-        return new ConflictsBuilder(
-            contentRepository: $contentRepository,
-            workspaceName: $workspaceName,
-            preferredDimensionSpacePoint: $preferredDimensionSpacePoint
-        );
+    public static function builder(): ConflictsBuilder
+    {
+        return new ConflictsBuilder();
     }
 
     public function jsonSerialize(): mixed

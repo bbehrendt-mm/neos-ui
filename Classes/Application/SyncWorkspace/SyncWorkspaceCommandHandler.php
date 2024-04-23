@@ -18,8 +18,8 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebas
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Workspace\WorkspaceProvider;
-use Neos\Neos\Ui\Application\Shared\Conflicts;
 use Neos\Neos\Ui\Application\Shared\ConflictsOccurred;
+use Neos\Neos\Ui\Infrastructure\ContentRepository\ConflictsFactory;
 
 /**
  * The application layer level command handler to for rebasing the workspace
@@ -48,19 +48,15 @@ final class SyncWorkspaceCommandHandler
 
             return new SyncingSucceeded();
         } catch (WorkspaceRebaseFailed $e) {
-            $conflictsBuilder = Conflicts::builder(
+            $conflictsFactory = new ConflictsFactory(
                 contentRepository: $this->contentRepositoryRegistry
                     ->get($command->contentRepositoryId),
                 workspaceName: $command->workspaceName,
                 preferredDimensionSpacePoint: $command->preferredDimensionSpacePoint
             );
 
-            foreach ($e->commandsThatFailedDuringRebase as $commandThatFailedDuringRebase) {
-                $conflictsBuilder->addCommandThatFailedDuringRebase($commandThatFailedDuringRebase);
-            }
-
             return new ConflictsOccurred(
-                conflicts: $conflictsBuilder->build()
+                conflicts: $conflictsFactory->fromWorkspaceRebaseFailed($e)
             );
         }
     }
