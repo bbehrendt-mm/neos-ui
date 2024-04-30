@@ -18,6 +18,7 @@ import {
     routes,
     serverState,
     menu,
+    user,
     nodeTypes
 } from './System';
 import localStorageMiddleware from './localStorageMiddleware';
@@ -102,7 +103,17 @@ function initializeReduxState() {
     const persistedState = localStorage.getItem('persistedState')
         ? JSON.parse(localStorage.getItem('persistedState'))
         : {};
-    const mergedState = merge({}, serverState, persistedState);
+    const mergedState = merge(
+        {},
+        serverState,
+        // QUIRK ALERT:
+        // The `user` state used to be part of `initialState` (a.k.a.
+        // `serverState`) but has been moved to a separate key within
+        // `initialData`. It is still being merged at this point to
+        // keep downstream impact at a minimum.
+        {user},
+        persistedState
+    );
 
     store.dispatch(actions.System.init(mergedState));
 }

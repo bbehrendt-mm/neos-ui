@@ -87,6 +87,8 @@ export const routes = getInlinedData('routes');
 
 export const menu = getInlinedData('menu');
 
+export const user = getInlinedData('user');
+
 export const neos = initializeJsAPI(window, {
     systemEnv,
     routes
