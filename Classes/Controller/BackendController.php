@@ -147,6 +147,7 @@ class BackendController extends ActionController
         }
 
         $currentAccount = $this->securityContext->getAccount();
+        assert($currentAccount !== null);
         $workspaceName = WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier());
 
         try {
