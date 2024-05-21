@@ -64,8 +64,7 @@ async function main() {
 
     await Promise.all([
         loadNodeTypesSchema(),
-        loadTranslations(),
-        loadImpersonateStatus()
+        loadTranslations()
     ]);
 
     store.dispatch(actions.System.ready());
@@ -182,18 +181,6 @@ async function loadTranslations() {
     const translations = await getJsonResource(configuration.endpoints.translations);
 
     i18nRegistry.setTranslations(translations);
-}
-
-async function loadImpersonateStatus() {
-    try {
-        const {impersonateStatus} = backend.get().endpoints;
-        const impersonateState = await impersonateStatus();
-        if (impersonateState) {
-            store.dispatch(actions.User.Impersonate.fetchStatus(impersonateState));
-        }
-    } catch (error) {
-        store.dispatch(actions.UI.FlashMessages.add('impersonateStatusError', error.message, 'error'));
-    }
 }
 
 function renderApplication() {
