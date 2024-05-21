@@ -1,8 +1,18 @@
+/*
+ * This file is part of the Neos.Neos.Ui package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+// @ts-ignore
 import logo from '@neos-project/react-ui-components/src/Logo/logo.svg';
 
 import styles from '../Containers/ErrorBoundary/style.module.css';
 
-export function terminateDueToFatalInitializationError(reason) {
+export function terminateDueToFatalInitializationError(reason: string): never {
     if (!document.body) {
         throw new Error(reason);
     }
